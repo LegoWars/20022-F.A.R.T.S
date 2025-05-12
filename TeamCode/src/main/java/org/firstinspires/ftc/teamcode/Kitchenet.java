@@ -72,36 +72,36 @@ public class Kitchenet {
     public double CapstanCurrent;
     public double SlidesCurrent;
 
-    public double KilometersTargetVelocity;
-    public double MilesTargetVelocity;
-    public double FriesTargetVelocity;
-    public double NuggsTargetVelocity;
-    public double KilometersTargetPower;
-    public double MilesTargetPower;
-    public double FriesTargetPower;
-    public double NuggsTargetPower;
-    public double JohnPower;
-    public double BobPower;
-    public double EmmaPower;
-    public double EmmrPower;
+    public double FrontRightTargetVelocity;
+    public double FrontLeftTargetVelocity;
+    public double BackRightTargetVelocity;
+    public double BackLeftTargetVelocity;
+    public double FrontRightTargetPower;
+    public double FrontLeftTargetPower;
+    public double BackRightTargetPower;
+    public double BackLeftTargetPower;
+    public double Capstan1Power;
+    public double Capstan2Power;
+    public double Slides1Power;
+    public double Slides2Power;
     public Vector2d errorVector;
     public Vector2d TargetVector;
 
     public Pose2D startpose = new Pose2D(DistanceUnit.INCH,0,0,AngleUnit.DEGREES,0);
 
 
-    public DcMotorEx Kilometers;
-    public DcMotorEx Miles;
-    public DcMotorEx Fries;
-    public DcMotorEx Nuggs;
-    public DcMotorEx John;
-    public DcMotorEx Bob;
-    public DcMotorEx Emma;
-    public DcMotorEx Emmr;
+    public DcMotorEx FrontRight;
+    public DcMotorEx FrontLeft;
+    public DcMotorEx BackRight;
+    public DcMotorEx BackLeft;
+    public DcMotorEx Capstan1;
+    public DcMotorEx Capstan2;
+    public DcMotorEx Slides1;
+    public DcMotorEx Slides2;
 
-    private Servo Nathaner;
-    private Servo Nathanest;
-    private Servo Nathan;
+    private Servo Servo2;
+    private Servo Servo3;
+    private Servo Servo1;
 
     GoBildaPinpointDriver odo;
 
@@ -125,18 +125,18 @@ public class Kitchenet {
         CapstanController = new PIDController(pCapstan, iCapstan, dCapstan);
         SlidesController = new PIDController(pSlides, iSlides, dSlides);
 
-        Miles  = setupDriveMotorAuto("Miles", DcMotorEx.Direction.FORWARD);
-        Kilometers = setupDriveMotorAuto("Kilometers", DcMotor.Direction.REVERSE);
-        Nuggs  = setupDriveMotorAuto( "Nuggs", DcMotor.Direction.FORWARD);
-        Fries = setupDriveMotorAuto( "Fries",DcMotor.Direction.REVERSE);
-        John = setupCapstanMotor( "John",DcMotor.Direction.FORWARD);
-        Bob = setupCapstanMotor( "Bob",DcMotor.Direction.REVERSE);
-        Emma = setupCapstanMotor( "Emma",DcMotor.Direction.FORWARD);
-        Emmr = setupCapstanMotor( "Emmr",DcMotor.Direction.FORWARD);
+        FrontLeft = setupDriveMotorAuto("FrontLeft", DcMotorEx.Direction.FORWARD);
+        FrontRight = setupDriveMotorAuto("FrontRight", DcMotor.Direction.REVERSE);
+        BackLeft = setupDriveMotorAuto( "BackLeft", DcMotor.Direction.FORWARD);
+        BackRight = setupDriveMotorAuto( "BackRight",DcMotor.Direction.REVERSE);
+        Capstan1 = setupCapstanMotor( "Capstan1",DcMotor.Direction.FORWARD);
+        Capstan2 = setupCapstanMotor( "Capstan2",DcMotor.Direction.REVERSE);
+        Slides1 = setupCapstanMotor( "Slides1",DcMotor.Direction.FORWARD);
+        Slides2 = setupCapstanMotor( "Slides2",DcMotor.Direction.FORWARD);
 
-        Nathanest = myOpMode.hardwareMap.get(Servo.class, "Nathanest");
-        Nathan = myOpMode.hardwareMap.get(Servo.class, "Nathan");
-        Nathaner = myOpMode.hardwareMap.get(Servo.class, "Nathaner");
+        Servo3 = myOpMode.hardwareMap.get(Servo.class, "Servo3");
+        Servo1 = myOpMode.hardwareMap.get(Servo.class, "Servo1");
+        Servo2 = myOpMode.hardwareMap.get(Servo.class, "Servo2");
 
         ControlHub_VoltageSensor = myOpMode.hardwareMap.get(VoltageSensor.class, "Control Hub");
         ExpansionHub2_VoltageSensor = myOpMode.hardwareMap.get(VoltageSensor.class, "Expansion Hub 2");
@@ -185,14 +185,14 @@ public class Kitchenet {
         CapstanController = new PIDController(pCapstan, iCapstan, dCapstan);
         SlidesController = new PIDController(pSlides, iSlides, dSlides);
 
-        Miles  = setupDriveMotorTele("Miles", DcMotorEx.Direction.FORWARD);
-        Kilometers = setupDriveMotorTele("Kilometers", DcMotor.Direction.REVERSE);
-        Nuggs  = setupDriveMotorTele( "Nuggs", DcMotor.Direction.FORWARD);
-        Fries = setupDriveMotorTele( "Fries",DcMotor.Direction.REVERSE);
-        John = setupCapstanMotor( "John",DcMotor.Direction.FORWARD);
-        Bob = setupCapstanMotor( "Bob",DcMotor.Direction.REVERSE);
-        Emma = setupCapstanMotor( "Emma",DcMotor.Direction.FORWARD);
-        Emmr = setupCapstanMotor( "Emmr",DcMotor.Direction.FORWARD);
+        FrontLeft = setupDriveMotorTele("FrontLeft", DcMotorEx.Direction.FORWARD);
+        FrontRight = setupDriveMotorTele("FrontRight", DcMotor.Direction.REVERSE);
+        BackLeft = setupDriveMotorTele( "BackLeft", DcMotor.Direction.FORWARD);
+        BackRight = setupDriveMotorTele( "BackRight",DcMotor.Direction.REVERSE);
+        Capstan1 = setupCapstanMotor( "Capstan1",DcMotor.Direction.FORWARD);
+        Capstan2 = setupCapstanMotor( "Capstan2",DcMotor.Direction.REVERSE);
+        Slides1 = setupCapstanMotor( "Slides1",DcMotor.Direction.FORWARD);
+        Slides2 = setupCapstanMotor( "Slides2",DcMotor.Direction.FORWARD);
 
         ControlHub_VoltageSensor = myOpMode.hardwareMap.get(VoltageSensor.class, "Control Hub");
         ExpansionHub2_VoltageSensor = myOpMode.hardwareMap.get(VoltageSensor.class, "Expansion Hub 2");
@@ -294,15 +294,15 @@ public class Kitchenet {
         //            rightBack -- > Fries
 
 
-        MilesTargetPower = (speed * (X * Math.min(Math.max(1.4 * Math.cos((headingCurrent + 45) / 180 * Math.PI), -1), 1) + Y * Math.min(Math.max(1.4 * Math.cos((headingCurrent + -45) / 180 * Math.PI), -1), 1) + Z));
-        NuggsTargetPower = (speed * (X * Math.min(Math.max(1.4 * Math.cos((headingCurrent + -45) / 180 * Math.PI), -1), 1) + -(Y * Math.min(Math.max(1.4 * Math.cos((headingCurrent + 45) / 180 * Math.PI), -1), 1)) + Z));
-        KilometersTargetPower = (speed * (X * Math.min(Math.max(1.4 * Math.cos((headingCurrent + -45) / 180 * Math.PI), -1), 1) + -(Y * Math.min(Math.max(1.4 * Math.cos((headingCurrent + 45) / 180 * Math.PI), -1), 1)) + -Z));
-        FriesTargetPower = (speed * (X * Math.min(Math.max(1.4 * Math.cos((headingCurrent + 45) / 180 * Math.PI), -1), 1) + Y * Math.min(Math.max(1.4 * Math.cos((headingCurrent + -45) / 180 * Math.PI), -1), 1) + -Z));
+        FrontLeftTargetPower = (speed * (X * Math.min(Math.max(1.4 * Math.cos((headingCurrent + 45) / 180 * Math.PI), -1), 1) + Y * Math.min(Math.max(1.4 * Math.cos((headingCurrent + -45) / 180 * Math.PI), -1), 1) + Z));
+        BackLeftTargetPower = (speed * (X * Math.min(Math.max(1.4 * Math.cos((headingCurrent + -45) / 180 * Math.PI), -1), 1) + -(Y * Math.min(Math.max(1.4 * Math.cos((headingCurrent + 45) / 180 * Math.PI), -1), 1)) + Z));
+        FrontRightTargetPower = (speed * (X * Math.min(Math.max(1.4 * Math.cos((headingCurrent + -45) / 180 * Math.PI), -1), 1) + -(Y * Math.min(Math.max(1.4 * Math.cos((headingCurrent + 45) / 180 * Math.PI), -1), 1)) + -Z));
+        BackRightTargetPower = (speed * (X * Math.min(Math.max(1.4 * Math.cos((headingCurrent + 45) / 180 * Math.PI), -1), 1) + Y * Math.min(Math.max(1.4 * Math.cos((headingCurrent + -45) / 180 * Math.PI), -1), 1) + -Z));
 
 
-        CapstanCurrent = John.getCurrentPosition();
+        CapstanCurrent = Capstan1.getCurrentPosition();
 
-        SlidesCurrent = Emma.getCurrentPosition();
+        SlidesCurrent = Slides1.getCurrentPosition();
 
 //        errorVector = new Vector2d(xTarget-xCurrent,yTarget-yCurrent);
 //        TargetVector = errorVector.rotateBy(-CurrentLocation.getHeading(AngleUnit.DEGREES));
@@ -335,19 +335,19 @@ public class Kitchenet {
 //            FriesTargetVelocity = (drivevelocity - strafevelocity - headingvelocity) * speed;
 //            NuggsTargetVelocity = (drivevelocity + strafevelocity + headingvelocity) * speed;
 
-            JohnPower = Capstanpower;
-            BobPower = Capstanpower;
-            EmmaPower = Slidespower;
-            EmmrPower = Slidespower;
+            Capstan1Power = Capstanpower;
+            Capstan2Power = Capstanpower;
+            Slides1Power = Slidespower;
+            Slides2Power = Slidespower;
 
-            Kilometers.setPower(KilometersTargetPower);
-            Miles.setPower(MilesTargetPower);
-            Fries.setPower(FriesTargetPower);
-            Nuggs.setPower(NuggsTargetPower);
-            John.setPower(JohnPower);
-            Bob.setPower(BobPower);
-            Emma.setPower(EmmaPower);
-            Emmr.setPower(EmmrPower);
+            FrontRight.setPower(FrontRightTargetPower);
+            FrontLeft.setPower(FrontLeftTargetPower);
+            BackRight.setPower(BackRightTargetPower);
+            BackLeft.setPower(BackLeftTargetPower);
+            Capstan1.setPower(Capstan1Power);
+            Capstan2.setPower(Capstan2Power);
+            Slides1.setPower(Slides1Power);
+            Slides2.setPower(Slides2Power);
 
 
 
@@ -376,9 +376,9 @@ public class Kitchenet {
         if (headingCurrent < 0) {
             headingCurrent = headingCurrent + 360;
         }
-        CapstanCurrent = John.getCurrentPosition();
+        CapstanCurrent = Capstan1.getCurrentPosition();
 
-        SlidesCurrent = Emma.getCurrentPosition();
+        SlidesCurrent = Slides1.getCurrentPosition();
 
         errorVector = new Vector2d(xTarget-xCurrent,yTarget-yCurrent);
         TargetVector = errorVector.rotateBy(-CurrentLocation.getHeading(AngleUnit.DEGREES));
@@ -406,24 +406,24 @@ public class Kitchenet {
         }
 
 
-        KilometersTargetVelocity = (drivevelocity + strafevelocity - headingvelocity) * speed;
-        MilesTargetVelocity = (drivevelocity - strafevelocity + headingvelocity) * speed;
-        FriesTargetVelocity = (drivevelocity - strafevelocity - headingvelocity) * speed;
-        NuggsTargetVelocity = (drivevelocity + strafevelocity + headingvelocity) * speed;
+        FrontRightTargetVelocity = (drivevelocity + strafevelocity - headingvelocity) * speed;
+        FrontLeftTargetVelocity = (drivevelocity - strafevelocity + headingvelocity) * speed;
+        BackRightTargetVelocity = (drivevelocity - strafevelocity - headingvelocity) * speed;
+        BackLeftTargetVelocity = (drivevelocity + strafevelocity + headingvelocity) * speed;
 
-        JohnPower = Capstanpower;
-        BobPower = Capstanpower;
-        EmmaPower = Slidespower;
-        EmmrPower = Slidespower;
+        Capstan1Power = Capstanpower;
+        Capstan2Power = Capstanpower;
+        Slides1Power = Slidespower;
+        Slides2Power = Slidespower;
 
-        Kilometers.setVelocity(KilometersTargetVelocity);
-        Miles.setVelocity(MilesTargetVelocity);
-        Fries.setVelocity(FriesTargetVelocity);
-        Nuggs.setVelocity(NuggsTargetVelocity);
-        John.setPower(JohnPower);
-        Bob.setPower(BobPower);
-        Emma.setPower(EmmaPower);
-        Emmr.setPower(EmmrPower);
+        FrontRight.setVelocity(FrontRightTargetVelocity);
+        FrontLeft.setVelocity(FrontLeftTargetVelocity);
+        BackRight.setVelocity(BackRightTargetVelocity);
+        BackLeft.setVelocity(BackLeftTargetVelocity);
+        Capstan1.setPower(Capstan1Power);
+        Capstan2.setPower(Capstan2Power);
+        Slides1.setPower(Slides1Power);
+        Slides2.setPower(Slides2Power);
 
 
 
@@ -477,18 +477,18 @@ public class Kitchenet {
         myOpMode.telemetry.addData("XTarget Vec ",TargetVector.getX());
         myOpMode.telemetry.addData("YTarget Vec ",TargetVector.getY());
 
-        myOpMode.telemetry.addData("Kilometers ",Kilometers.getVelocity());
-        myOpMode.telemetry.addData("Miles ",Miles.getVelocity());
-        myOpMode.telemetry.addData("Fries ",Fries.getVelocity());
-        myOpMode.telemetry.addData("Nuggs ",Nuggs.getVelocity());
+        myOpMode.telemetry.addData("FrontRight ", FrontRight.getVelocity());
+        myOpMode.telemetry.addData("FrontLeft ", FrontLeft.getVelocity());
+        myOpMode.telemetry.addData("BackRight ", BackRight.getVelocity());
+        myOpMode.telemetry.addData("BackLeft ", BackLeft.getVelocity());
 //        myOpMode.telemetry.addData("John -",John.getPower());
 //        myOpMode.telemetry.addData("Bob -",Bob.getPower());
 //        myOpMode.telemetry.addData("Capstan Current -",John.getCurrentPosition());
 
-        myOpMode.telemetry.addData("Kilometers Target ",KilometersTargetVelocity);
-        myOpMode.telemetry.addData("Miles Target ",MilesTargetVelocity);
-        myOpMode.telemetry.addData("Fries Target ",FriesTargetVelocity);
-        myOpMode.telemetry.addData("Nuggs Target ",NuggsTargetVelocity);
+        myOpMode.telemetry.addData("FrontRight Target ", FrontRightTargetVelocity);
+        myOpMode.telemetry.addData("FrontLeft Target ", FrontLeftTargetVelocity);
+        myOpMode.telemetry.addData("BackRight Target ", BackRightTargetVelocity);
+        myOpMode.telemetry.addData("BackLeft Target ", BackLeftTargetVelocity);
 //        myOpMode.telemetry.addData("John Target -", JohnPower);
 //        myOpMode.telemetry.addData("Bob Target -", BobPower);
 
@@ -606,25 +606,25 @@ public class Kitchenet {
 
 
         public void ResetCapstan (){
-            John.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            Bob.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            Capstan1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            Capstan2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
 
-        public void ResetEmmaEmmmr (){
-            Emma.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            Emmr.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        public void ResetSlides (){
+            Slides1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            Slides2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         }
 
-        public void NathanPosition (double Position){
-            Nathan.setPosition(Position);
+        public void Servo1Position (double Position){
+            Servo1.setPosition(Position);
         }
 
-        public void NathanerPosition (double Position){
-            Nathaner.setPosition(Position);
+        public void Servo2Position (double Position){
+            Servo2.setPosition(Position);
         }
 
-        public void NathanestPosition (double Position){
-            Nathanest.setPosition(Position);
+        public void Servo3Position (double Position){
+            Servo3.setPosition(Position);
         }
 
 
