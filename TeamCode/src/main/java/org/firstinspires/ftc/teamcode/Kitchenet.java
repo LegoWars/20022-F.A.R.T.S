@@ -54,6 +54,8 @@ public class Kitchenet {
 
     public static double xTarget;
     public static double yTarget;
+    public static double PrexTarget;
+    public static double PreyTarget;
     public static double headingTarget;
     public static double CapstanTarget;
     public static double SlidesTarget;
@@ -119,32 +121,35 @@ public class Kitchenet {
 
     public void initializeAuto(){
 
-        DriveController = new PIDController(pDrive,iDrive,dDrive);
-        StrafeController = new PIDController(pStrafe,iStrafe,dStrafe);
-//        HeadingController = new PIDController(pHeading,iHeading,dHeading);
-        CapstanController = new PIDController(pCapstan, iCapstan, dCapstan);
-        SlidesController = new PIDController(pSlides, iSlides, dSlides);
 
-        FrontLeft = setupDriveMotorAuto("FrontLeft", DcMotorEx.Direction.FORWARD);
-        FrontRight = setupDriveMotorAuto("FrontRight", DcMotor.Direction.REVERSE);
-        BackLeft = setupDriveMotorAuto( "BackLeft", DcMotor.Direction.FORWARD);
-        BackRight = setupDriveMotorAuto( "BackRight",DcMotor.Direction.REVERSE);
-        Capstan1 = setupCapstanMotor( "Capstan1",DcMotor.Direction.FORWARD);
-        Capstan2 = setupCapstanMotor( "Capstan2",DcMotor.Direction.REVERSE);
-        Slides1 = setupCapstanMotor( "Slides1",DcMotor.Direction.FORWARD);
-        Slides2 = setupCapstanMotor( "Slides2",DcMotor.Direction.FORWARD);
+        FrontLeft = setupMotor("FrontLeft", DcMotorEx.Direction.FORWARD, DcMotor.RunMode.RUN_USING_ENCODER);
+        FrontRight = setupMotor("FrontRight", DcMotor.Direction.REVERSE, DcMotor.RunMode.RUN_USING_ENCODER);
+        BackLeft = setupMotor( "BackLeft", DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_USING_ENCODER);
+        BackRight = setupMotor( "BackRight",DcMotor.Direction.REVERSE, DcMotor.RunMode.RUN_USING_ENCODER);
+        Capstan1 = setupMotor( "Capstan1",DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Capstan2 = setupMotor( "Capstan2",DcMotor.Direction.REVERSE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Slides1 = setupMotor( "Slides1",DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Slides2 = setupMotor( "Slides2",DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        Servo3 = myOpMode.hardwareMap.get(Servo.class, "Servo3");
-        Servo1 = myOpMode.hardwareMap.get(Servo.class, "Servo1");
-        Servo2 = myOpMode.hardwareMap.get(Servo.class, "Servo2");
+
+        Servo3 = setupServo("Servo3", Servo.Direction.FORWARD);
+        Servo1 = setupServo("Servo1", Servo.Direction.FORWARD);
+        Servo2 = setupServo("Servo2", Servo.Direction.FORWARD);
 
         ControlHub_VoltageSensor = myOpMode.hardwareMap.get(VoltageSensor.class, "Control Hub");
         ExpansionHub2_VoltageSensor = myOpMode.hardwareMap.get(VoltageSensor.class, "Expansion Hub 2");
 
-
-
-
         odo = myOpMode.hardwareMap.get(GoBildaPinpointDriver.class,"odo");
+
+
+        DriveController = new PIDController(pDrive,iDrive,dDrive);
+        StrafeController = new PIDController(pStrafe,iStrafe,dStrafe);
+        CapstanController = new PIDController(pCapstan, iCapstan, dCapstan);
+        SlidesController = new PIDController(pSlides, iSlides, dSlides);
+
+
+
+
         odo.setOffsets(-57.15, -152.4);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
@@ -160,6 +165,8 @@ public class Kitchenet {
 
         xTarget = 0;
         yTarget = 0;
+        PrexTarget = 0;
+        PreyTarget = 0;
         headingTarget = 0;
         CapstanTarget = 0;
         SlidesTarget = 0;
@@ -179,28 +186,26 @@ public class Kitchenet {
 
     public void initializeTele(){
 
-//        DriveController = new PIDController(pDrive,iDrive,dDrive);
-//        StrafeController = new PIDController(pStrafe,iStrafe,dStrafe);
-        //HeadingController = new PIDController(pHeading,iHeading,dHeading);
-        CapstanController = new PIDController(pCapstan, iCapstan, dCapstan);
-        SlidesController = new PIDController(pSlides, iSlides, dSlides);
 
-        FrontLeft = setupDriveMotorTele("FrontLeft", DcMotorEx.Direction.FORWARD);
-        FrontRight = setupDriveMotorTele("FrontRight", DcMotor.Direction.REVERSE);
-        BackLeft = setupDriveMotorTele( "BackLeft", DcMotor.Direction.FORWARD);
-        BackRight = setupDriveMotorTele( "BackRight",DcMotor.Direction.REVERSE);
-        Capstan1 = setupCapstanMotor( "Capstan1",DcMotor.Direction.FORWARD);
-        Capstan2 = setupCapstanMotor( "Capstan2",DcMotor.Direction.REVERSE);
-        Slides1 = setupCapstanMotor( "Slides1",DcMotor.Direction.FORWARD);
-        Slides2 = setupCapstanMotor( "Slides2",DcMotor.Direction.FORWARD);
+        FrontLeft = setupMotor("FrontLeft", DcMotorEx.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        FrontRight = setupMotor("FrontRight", DcMotor.Direction.REVERSE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BackLeft = setupMotor( "BackLeft", DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        BackRight = setupMotor( "BackRight",DcMotor.Direction.REVERSE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Capstan1 = setupMotor( "Capstan1",DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Capstan2 = setupMotor( "Capstan2",DcMotor.Direction.REVERSE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Slides1 = setupMotor( "Slides1",DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Slides2 = setupMotor( "Slides2",DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         ControlHub_VoltageSensor = myOpMode.hardwareMap.get(VoltageSensor.class, "Control Hub");
         ExpansionHub2_VoltageSensor = myOpMode.hardwareMap.get(VoltageSensor.class, "Expansion Hub 2");
 
-
-
-
         odo = myOpMode.hardwareMap.get(GoBildaPinpointDriver.class,"odo");
+
+
+        CapstanController = new PIDController(pCapstan, iCapstan, dCapstan);
+        SlidesController = new PIDController(pSlides, iSlides, dSlides);
+
+
         odo.setOffsets(-57.15, -152.4);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
@@ -213,15 +218,8 @@ public class Kitchenet {
         odo.setPosition(startpose);
 
 
-
-//        xTarget = 0;
-//        yTarget = 0;
-//        headingTarget = 0;
         CapstanTarget = 0;
         SlidesTarget = 0;
-//        errorVector = new Vector2d(0,0);
-//        TargetVector = new Vector2d(0,0);
-
 
 
         myOpMode.telemetry = new MultipleTelemetry(myOpMode.telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -231,33 +229,7 @@ public class Kitchenet {
 
 
 
-    private DcMotorEx setupDriveMotorAuto(String deviceName, DcMotorEx.Direction direction) {
-        DcMotorEx aMotor = myOpMode.hardwareMap.get(DcMotorEx.class, deviceName);
-        aMotor.setDirection(direction);
-        aMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);  // Reset Encoders to zero
-        aMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        aMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);  // Requires motor encoder cables to be hooked up.
-        return aMotor;
-    }
 
-    private DcMotorEx setupDriveMotorTele(String deviceName, DcMotorEx.Direction direction) {
-        DcMotorEx aMotor = myOpMode.hardwareMap.get(DcMotorEx.class, deviceName);
-        aMotor.setDirection(direction);
-        aMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);  // Reset Encoders to zero
-        aMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        aMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);  // Requires motor encoder cables to be hooked up.
-        return aMotor;
-    }
-
-
-    private DcMotorEx setupCapstanMotor(String deviceName, DcMotorEx.Direction direction) {
-        DcMotorEx aMotor = myOpMode.hardwareMap.get(DcMotorEx.class, deviceName);
-        aMotor.setDirection(direction);
-        aMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);  // Reset Encoders to zero
-        aMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        aMotor.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);  // Requires motor encoder cables to be hooked up.
-        return aMotor;
-    }
 
 
 
@@ -268,15 +240,9 @@ public class Kitchenet {
         odo.update();
         Pose2D CurrentLocation = odo.getPosition();
 
-//        DriveController.setPID(pDrive, iDrive, dDrive);
-//        StrafeController.setPID(pStrafe, iStrafe, dStrafe);
-        //HeadingController.setPID(pHeading, iHeading, dHeading);
+
         CapstanController.setPID(pCapstan, iCapstan, dCapstan);
         SlidesController.setPID(pSlides, iSlides, dSlides);
-
-//        xCurrent = CurrentLocation.getX(DistanceUnit.INCH);
-//        yCurrent = CurrentLocation.getY(DistanceUnit.INCH);
-//        headingCurrent = -CurrentLocation.getHeading(AngleUnit.DEGREES);
 
 
 
@@ -284,14 +250,11 @@ public class Kitchenet {
             headingCurrent = headingCurrent + 360;
         }
 
-        double X = -xstick;
+        double X = xstick;
         double Y = ystick;
         double Z = headingstick * Z_Weight;
 
-        //            leftBack --> Nuggs
-        //            leftFront --> Miles
-        //            rightFront --> Kilometers
-        //            rightBack -- > Fries
+
 
 
         FrontLeftTargetPower = (speed * (X * Math.min(Math.max(1.4 * Math.cos((headingCurrent + 45) / 180 * Math.PI), -1), 1) + Y * Math.min(Math.max(1.4 * Math.cos((headingCurrent + -45) / 180 * Math.PI), -1), 1) + Z));
@@ -304,24 +267,14 @@ public class Kitchenet {
 
         SlidesCurrent = Slides1.getCurrentPosition();
 
-//        errorVector = new Vector2d(xTarget-xCurrent,yTarget-yCurrent);
-//        TargetVector = errorVector.rotateBy(-CurrentLocation.getHeading(AngleUnit.DEGREES));
 
-//        double drivepid = DrivePID(pDrive, iDrive, dDrive, TargetVector.getX());
-//        double strafepid = DrivePID(pStrafe, iStrafe, dStrafe, TargetVector.getY());
-//        double headingpid =HeadingPID(pHeading,iHeading,dHeading, headingCurrent, headingTarget);
-        //double headingpid = HeadingController.calculate(headingCurrent, headingTarget);
         double Capstanpid = CapstanController.calculate(CapstanCurrent, CapstanTarget);
         double Slidespid = SlidesController.calculate(SlidesCurrent, SlidesTarget);
 
-//        double driveff = Math.cos(Math.toRadians(xTarget/driveticksPerDegree)) * fDrive;
-//        double strafeff = Math.cos(Math.toRadians(yTarget/driveticksPerDegree)) * fStrafe;
-//        double headingff = Math.cos(Math.toRadians(headingTarget/driveticksPerDegree)) * fHeading;
+
         double Capstanff = Math.cos(Math.toRadians(CapstanTarget / CapstanTicksPerDegree)) * fCapstan;
 
-//        double drivevelocity = drivepid;
-//        double strafevelocity = strafepid;
-//        double headingvelocity = headingpid;
+
         double Capstanpower = Capstanpid + Capstanff;
         double Slidespower = Slidespid;
 
@@ -330,10 +283,6 @@ public class Kitchenet {
         }
 
 
-//            KilometersTargetVelocity = (drivevelocity + strafevelocity - headingvelocity) * speed;
-//            MilesTargetVelocity = (drivevelocity - strafevelocity + headingvelocity) * speed;
-//            FriesTargetVelocity = (drivevelocity - strafevelocity - headingvelocity) * speed;
-//            NuggsTargetVelocity = (drivevelocity + strafevelocity + headingvelocity) * speed;
 
             Capstan1Power = Capstanpower;
             Capstan2Power = Capstanpower;
@@ -361,9 +310,7 @@ public class Kitchenet {
         odo.update();
         Pose2D CurrentLocation = odo.getPosition();
 
-//        DriveController.setPID(pDrive, iDrive, dDrive);
-//        StrafeController.setPID(pStrafe, iStrafe, dStrafe);
-        //HeadingController.setPID(pHeading, iHeading, dHeading);
+
         CapstanController.setPID(pCapstan, iCapstan, dCapstan);
         SlidesController.setPID(pSlides, iSlides, dSlides);
 
@@ -386,13 +333,10 @@ public class Kitchenet {
         double drivepid = DrivePID(pDrive, iDrive, dDrive, TargetVector.getX());
         double strafepid = DrivePID(pStrafe, iStrafe, dStrafe, TargetVector.getY());
         double headingpid =HeadingPID(pHeading,iHeading,dHeading, headingCurrent, headingTarget);
-        //double headingpid = HeadingController.calculate(headingCurrent, headingTarget);
         double Capstanpid = CapstanController.calculate(CapstanCurrent, CapstanTarget);
         double Slidespid = SlidesController.calculate(SlidesCurrent, SlidesTarget);
 
-//        double driveff = Math.cos(Math.toRadians(xTarget/driveticksPerDegree)) * fDrive;
-//        double strafeff = Math.cos(Math.toRadians(yTarget/driveticksPerDegree)) * fStrafe;
-//        double headingff = Math.cos(Math.toRadians(headingTarget/driveticksPerDegree)) * fHeading;
+
         double Capstanff = Math.cos(Math.toRadians(CapstanTarget / CapstanTicksPerDegree)) * fCapstan;
 
         double drivevelocity = drivepid;
@@ -426,9 +370,25 @@ public class Kitchenet {
         Slides2.setPower(Slides2Power);
 
 
-
-
     }
+
+
+
+
+        DcMotorEx setupMotor(String deviceName, DcMotorEx.Direction direction, DcMotor.RunMode EncoderMode) {
+            DcMotorEx aMotor = myOpMode.hardwareMap.get(DcMotorEx.class, deviceName);
+            aMotor.setDirection(direction);
+            aMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);  // Reset Encoders to zero
+            aMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            aMotor.setMode(EncoderMode);  // Requires motor encoder cables to be hooked up.
+            return aMotor;
+        }
+
+        Servo setupServo(String deviceName, Servo.Direction direction) {
+            Servo aServo = myOpMode.hardwareMap.get(Servo.class, deviceName);
+            aServo.setDirection(direction);
+            return aServo;
+        }
 
 
     public double HeadingPID(double p, double i, double d, double current, double target){
@@ -443,11 +403,7 @@ public class Kitchenet {
         intThingheading += headingerror;
         double derThing = headingerror - laserrorheading;
 
-//        if (Math.abs(error) >= Math.PI){
-//            error -= Math.PI * 2;
-//        } else if (error < Math.PI){
-//            error += Math.PI * 2;
-//        }
+
 
         double output = (headingerror * p) + (intThingheading * i) + (derThing * d);
         laserrorheading = headingerror;
@@ -481,16 +437,13 @@ public class Kitchenet {
         myOpMode.telemetry.addData("FrontLeft ", FrontLeft.getVelocity());
         myOpMode.telemetry.addData("BackRight ", BackRight.getVelocity());
         myOpMode.telemetry.addData("BackLeft ", BackLeft.getVelocity());
-//        myOpMode.telemetry.addData("John -",John.getPower());
-//        myOpMode.telemetry.addData("Bob -",Bob.getPower());
-//        myOpMode.telemetry.addData("Capstan Current -",John.getCurrentPosition());
+
 
         myOpMode.telemetry.addData("FrontRight Target ", FrontRightTargetVelocity);
         myOpMode.telemetry.addData("FrontLeft Target ", FrontLeftTargetVelocity);
         myOpMode.telemetry.addData("BackRight Target ", BackRightTargetVelocity);
         myOpMode.telemetry.addData("BackLeft Target ", BackLeftTargetVelocity);
-//        myOpMode.telemetry.addData("John Target -", JohnPower);
-//        myOpMode.telemetry.addData("Bob Target -", BobPower);
+
 
 
         myOpMode.telemetry.addData("Target X ",xTarget);
@@ -510,7 +463,6 @@ public class Kitchenet {
         TelemetryPacket packet1 = new TelemetryPacket();
         packet1.fieldOverlay()
                 .drawGrid(0, 0, 144, 144, 7, 7)
-               // .setTranslation(6 * 12, 6 * 12)
                 .setStroke("goldenrod")
                 .strokeCircle(xCurrent, yCurrent, 4)
                 .setStroke("blue")
@@ -534,6 +486,12 @@ public class Kitchenet {
             startpose = new Pose2D(DistanceUnit.INCH,x,y,AngleUnit.DEGREES, rotation);
         }
         public void driveTo(double x, double y) {
+
+            if (x!=xTarget || y!=yTarget){
+                PrexTarget=xTarget;
+                PreyTarget=yTarget;
+            }
+
             xTarget = x;
             yTarget = y;
             speed = 1;
@@ -541,6 +499,12 @@ public class Kitchenet {
         }
 
         public void driveTo(double x, double y, double heading) {
+
+            if (x!=xTarget || y!=yTarget){
+                PrexTarget=xTarget;
+                PreyTarget=yTarget;
+            }
+
             xTarget = x;
             yTarget = y;
             headingTarget = heading;
@@ -549,6 +513,12 @@ public class Kitchenet {
         }
 
         public void driveTo(double x, double y, double heading, double Speed) {
+
+            if (x!=xTarget || y!=yTarget){
+                PrexTarget=xTarget;
+                PreyTarget=yTarget;
+            }
+
             xTarget = x;
             yTarget = y;
             headingTarget = heading;

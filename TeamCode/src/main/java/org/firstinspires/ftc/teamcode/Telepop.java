@@ -36,11 +36,10 @@ public class Telepop extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            stuff.controllerUpdateAuto();
 
             stuff.telemetryupdate();
 
-            stuff.controllerUpdateTele(gamepad1.left_stick_y, gamepad1.left_stick_x,gamepad1.right_stick_x, Speed);
+            stuff.controllerUpdateTele( -(gamepad1.left_stick_y), gamepad1.left_stick_x,gamepad1.right_stick_x, Speed);
 
             if (0.1 <= gamepad1.left_trigger) {
                 Speed = 0.25;
@@ -61,9 +60,7 @@ public class Telepop extends LinearOpMode {
             }
 
 
-            if(false){
-                stuff.driveTo(5,4);
-            }
+
 
 
         }
