@@ -46,6 +46,7 @@ public class Kitchenet {
     public double headingvelocity;
 
     public static double speed;
+    public double DefaultSpeed;
     public static double Z_Weight;
 
     public static double xTarget;
@@ -76,8 +77,8 @@ public class Kitchenet {
     public double BackRightTargetPower;
     public double BackLeftTargetPower;
 
-    public Vector2d PureErrorVector;
-    public Vector2d PureTargetVector;
+    public Vector2d PureErrorVector = new Vector2d(0,0);
+    public Vector2d PureTargetVector = new Vector2d(0,0);
     public Vector2d TargetPath;
     public Vector2d PastPath;
     public double TargetPathSqurd;
@@ -97,6 +98,10 @@ public class Kitchenet {
 
 
     GoBildaPinpointDriver odo;
+    public double odoYawScalor;
+    public double odoXoffSet;
+    public double odoYoffSet;
+    public int odoCalabrasionSleep;
 
     public VoltageSensor ControlHub_VoltageSensor;
     public VoltageSensor ExpansionHub2_VoltageSensor;
@@ -152,18 +157,6 @@ public class Kitchenet {
     public void initializeAuto(){
 
     //Drive Init
-        FrontLeft = MotorMap("FrontLeft", DcMotorEx.Direction.FORWARD, DcMotor.RunMode.RUN_USING_ENCODER);
-        FrontRight = MotorMap("FrontRight", DcMotor.Direction.REVERSE, DcMotor.RunMode.RUN_USING_ENCODER);
-        BackLeft = MotorMap( "BackLeft", DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_USING_ENCODER);
-        BackRight = MotorMap( "BackRight",DcMotor.Direction.REVERSE, DcMotor.RunMode.RUN_USING_ENCODER);
-
-        ControlHub_VoltageSensor = myOpMode.hardwareMap.get(VoltageSensor.class, "Control Hub");
-        ExpansionHub2_VoltageSensor = myOpMode.hardwareMap.get(VoltageSensor.class, "Expansion Hub 2");
-
-        odo = myOpMode.hardwareMap.get(GoBildaPinpointDriver.class,"odo");
-
-        DriveController = new PIDController(pDrive,iDrive,dDrive);
-        StrafeController = new PIDController(pStrafe,iStrafe,dStrafe);
 
         laserrorheading = 0;
         intThingheading = 0;
@@ -183,34 +176,68 @@ public class Kitchenet {
         iHeading = 0;
         dHeading = 0;
 
-        odo.setOffsets(-57.15, -152.4);
+        odoYawScalor = 1.0012049;
+        odoXoffSet = -57.15;
+        odoYoffSet = -152.4;
+        odoCalabrasionSleep = 500;
+
+        Eager = 1;
+        Strict = 1;
+
+        DefaultSpeed = 1;
+
+
+        FrontLeft = MotorMap("FrontLeft", DcMotorEx.Direction.FORWARD, DcMotor.RunMode.RUN_USING_ENCODER);
+        FrontRight = MotorMap("FrontRight", DcMotor.Direction.REVERSE, DcMotor.RunMode.RUN_USING_ENCODER);
+        BackLeft = MotorMap( "BackLeft", DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_USING_ENCODER);
+        BackRight = MotorMap( "BackRight",DcMotor.Direction.REVERSE, DcMotor.RunMode.RUN_USING_ENCODER);
+
+        ControlHub_VoltageSensor = myOpMode.hardwareMap.get(VoltageSensor.class, "Control Hub");
+        ExpansionHub2_VoltageSensor = myOpMode.hardwareMap.get(VoltageSensor.class, "Expansion Hub 2");
+
+        odo = myOpMode.hardwareMap.get(GoBildaPinpointDriver.class,"odo");
+
+        DriveController = new PIDController(pDrive,iDrive,dDrive);
+        StrafeController = new PIDController(pStrafe,iStrafe,dStrafe);
+
+        odo.setOffsets(odoXoffSet, odoYoffSet);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
-        odo.setYawScalar(1.0012049);
+        odo.setYawScalar(odoYawScalor);
 
         odo.recalibrateIMU();
-        myOpMode.sleep(500);
+        myOpMode.sleep(odoCalabrasionSleep);
 
         if (startpose != null) {
             odo.setPosition(startpose);
+        } else {
+            xTarget = 0;
+            yTarget = 0;
+            PrexTarget = 0;
+            PreyTarget = 0;
+            headingTarget = 0;
         }
-
-        xTarget = 0;
-        yTarget = 0;
-        PrexTarget = 0;
-        PreyTarget = 0;
-        headingTarget = 0;
-
-        PureErrorVector = new Vector2d(0,0);
-        PureTargetVector = new Vector2d(0,0);
-        Eager = 1;
-        Strict = 1;
 
         myOpMode.telemetry = new MultipleTelemetry(myOpMode.telemetry, FtcDashboard.getInstance().getTelemetry());
         FtcDashboard dashboard = FtcDashboard.getInstance();
 
 
         //Personal Init
+
+        pCapstan = 0.002;
+        iCapstan = 0;
+        dCapstan = 0.0001;
+        fCapstan = 0.0;
+
+        CapstanTicksPerDegree = 8192/360;
+
+        pSlides = 0.005;
+        iSlides = 0.0;
+        dSlides = 0.00001;
+        fSlides = 0.0;
+
+        CapstanTarget = 0;
+        SlidesTarget = 0;
 
         Capstan1 = MotorMap( "Capstan1",DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         Capstan2 = MotorMap( "Capstan2",DcMotor.Direction.REVERSE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -224,21 +251,6 @@ public class Kitchenet {
         CapstanController = new PIDController(pCapstan, iCapstan, dCapstan);
         SlidesController = new PIDController(pSlides, iSlides, dSlides);
 
-        pCapstan = 0.002;
-        iCapstan = 0;
-        dCapstan = 0.0001;
-        fCapstan = 0.0;
-
-        CapstanTicksPerDegree = 8192/360;
-
-        pSlides = 0.005;
-        iSlides = 0.0;
-        dSlides = 0.00001;
-        fSlides = 0.0;
-
-        CapstanTarget = 0;
-        SlidesTarget = 0;
-
     }
 
 
@@ -246,6 +258,13 @@ public class Kitchenet {
     public void initializeTele(){
 
     //Drive Init
+
+        Z_Weight = 0.75;
+
+        odoYawScalor = 1.0012049;
+        odoXoffSet = -57.15;
+        odoYoffSet = -152.4;
+        odoCalabrasionSleep = 500;
 
         FrontLeft = MotorMap("FrontLeft", DcMotorEx.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         FrontRight = MotorMap("FrontRight", DcMotor.Direction.REVERSE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -257,15 +276,13 @@ public class Kitchenet {
 
         odo = myOpMode.hardwareMap.get(GoBildaPinpointDriver.class,"odo");
 
-        Z_Weight = 0.75;
-
-        odo.setOffsets(-57.15, -152.4);
+        odo.setOffsets(odoXoffSet, odoYoffSet);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         odo.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.REVERSED);
-        odo.setYawScalar(1.0012049);
+        odo.setYawScalar(odoYawScalor);
 
         odo.recalibrateIMU();
-        myOpMode.sleep(500);
+        myOpMode.sleep(odoCalabrasionSleep);
 
         odo.setPosition(startpose);
 
@@ -274,14 +291,6 @@ public class Kitchenet {
 
 
     //Personal Init
-
-        Capstan1 = MotorMap( "Capstan1",DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Capstan2 = MotorMap( "Capstan2",DcMotor.Direction.REVERSE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Slides1 = MotorMap( "Slides1",DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Slides2 = MotorMap( "Slides2",DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        CapstanController = new PIDController(pCapstan, iCapstan, dCapstan);
-        SlidesController = new PIDController(pSlides, iSlides, dSlides);
 
         CapstanTarget = 0;
         SlidesTarget = 0;
@@ -298,6 +307,13 @@ public class Kitchenet {
         dSlides = 0.00001;
         fSlides = 0.0;
 
+        Capstan1 = MotorMap( "Capstan1",DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Capstan2 = MotorMap( "Capstan2",DcMotor.Direction.REVERSE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Slides1 = MotorMap( "Slides1",DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        Slides2 = MotorMap( "Slides2",DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        CapstanController = new PIDController(pCapstan, iCapstan, dCapstan);
+        SlidesController = new PIDController(pSlides, iSlides, dSlides);
 
     }
 
@@ -331,6 +347,7 @@ public class Kitchenet {
 
 
     public void PersonalUpdateTele(){
+
 
         CapstanController.setPID(pCapstan, iCapstan, dCapstan);
         SlidesController.setPID(pSlides, iSlides, dSlides);
@@ -558,8 +575,23 @@ public class Kitchenet {
                 rotation = -(heading - 360);
             }
             startpose = new Pose2D(DistanceUnit.INCH,x,y,AngleUnit.DEGREES, rotation);
+
+            xTarget = startpose.getX(DistanceUnit.INCH);
+            yTarget = startpose.getY(DistanceUnit.INCH);
+            PrexTarget = startpose.getX(DistanceUnit.INCH);
+            PreyTarget = startpose.getY(DistanceUnit.INCH);
+            headingTarget = startpose.getHeading(AngleUnit.DEGREES);
+
         }
 
+
+    public void ResetPinpoint (){
+        myOpMode.sleep(odoCalabrasionSleep);
+        odo.setYawScalar(odoYawScalor);
+        odo.recalibrateIMU();
+        myOpMode.sleep(odoCalabrasionSleep);
+
+    }
 
 
         public void driveTo(double x, double y) {
@@ -571,7 +603,7 @@ public class Kitchenet {
 
             xTarget = x;
             yTarget = y;
-            speed = 1;
+            speed = DefaultSpeed;
 
         }
 
@@ -585,7 +617,7 @@ public class Kitchenet {
             xTarget = x;
             yTarget = y;
             headingTarget = heading;
-            speed = 1;
+            speed = DefaultSpeed;
 
         }
 
@@ -603,13 +635,6 @@ public class Kitchenet {
         }
 
 
-    public void ResetPinpoint (){
-        myOpMode.sleep(250);
-        odo.setYawScalar(1.0012049);
-        odo.recalibrateIMU();
-        myOpMode.sleep(250);
-
-    }
 
 
         public void CapstanPosition(double target) {
