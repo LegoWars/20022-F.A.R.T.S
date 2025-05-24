@@ -86,8 +86,17 @@ public class Kitchenet {
     public double Capstan2Power;
     public double Slides1Power;
     public double Slides2Power;
-    public Vector2d errorVector;
-    public Vector2d TargetVector;
+    public Vector2d PureErrorVector;
+    public Vector2d PureTargetVector;
+    public Vector2d TargetPath;
+    public Vector2d PastPath;
+    public double TargetPathSqurd;
+    public double ScalarProj;
+    public Vector2d PointOnPath;
+    public Vector2d ToPath;
+    public Vector2d TrueError;
+    public double Strict;
+    public double Eager;
 
     public Pose2D startpose = new Pose2D(DistanceUnit.INCH,0,0,AngleUnit.DEGREES,0);
 
@@ -170,9 +179,10 @@ public class Kitchenet {
         headingTarget = 0;
         CapstanTarget = 0;
         SlidesTarget = 0;
-        errorVector = new Vector2d(0,0);
-        TargetVector = new Vector2d(0,0);
-
+        PureErrorVector = new Vector2d(0,0);
+        PureTargetVector = new Vector2d(0,0);
+        Eager = 1;
+        Strict = 1;
 
 
         myOpMode.telemetry = new MultipleTelemetry(myOpMode.telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -318,20 +328,28 @@ public class Kitchenet {
         yCurrent = CurrentLocation.getY(DistanceUnit.INCH);
         headingCurrent = -CurrentLocation.getHeading(AngleUnit.DEGREES);
 
+        CapstanCurrent = Capstan1.getCurrentPosition();
+        SlidesCurrent = Slides1.getCurrentPosition();
 
 
         if (headingCurrent < 0) {
             headingCurrent = headingCurrent + 360;
         }
-        CapstanCurrent = Capstan1.getCurrentPosition();
 
-        SlidesCurrent = Slides1.getCurrentPosition();
+        TargetPath = new Vector2d((xTarget - PrexTarget),(yTarget - PreyTarget));
+        PastPath = new Vector2d((xCurrent-PrexTarget),(yCurrent-PreyTarget));
+        TargetPathSqurd = (TargetPath.getX() * TargetPath.getX()) + (TargetPath.getY() * TargetPath.getY());
+        ScalarProj = PastPath.dot(TargetPath) / TargetPathSqurd;
+        PointOnPath = (new Vector2d(PrexTarget,PreyTarget)).plus(TargetPath.times(ScalarProj));
+        ToPath = PointOnPath.minus(new Vector2d(xCurrent,yCurrent));
 
-        errorVector = new Vector2d(xTarget-xCurrent,yTarget-yCurrent);
-        TargetVector = errorVector.rotateBy(-CurrentLocation.getHeading(AngleUnit.DEGREES));
+        PureErrorVector = new Vector2d(xTarget-xCurrent,yTarget-yCurrent);
+        PureTargetVector = PureErrorVector.rotateBy(-CurrentLocation.getHeading(AngleUnit.DEGREES));
 
-        double drivepid = DrivePID(pDrive, iDrive, dDrive, TargetVector.getX());
-        double strafepid = DrivePID(pStrafe, iStrafe, dStrafe, TargetVector.getY());
+        TrueError = (ToPath.times(Strict)).plus(PureTargetVector.times(Eager));
+
+        double drivepid = DrivePID(pDrive, iDrive, dDrive, TrueError.getX());
+        double strafepid = DrivePID(pStrafe, iStrafe, dStrafe, TrueError.getY());
         double headingpid =HeadingPID(pHeading,iHeading,dHeading, headingCurrent, headingTarget);
         double Capstanpid = CapstanController.calculate(CapstanCurrent, CapstanTarget);
         double Slidespid = SlidesController.calculate(SlidesCurrent, SlidesTarget);
@@ -427,11 +445,11 @@ public class Kitchenet {
     public void telemetryupdate(){
 
 
-        myOpMode.telemetry.addData("Xerror ",errorVector.getX());
-        myOpMode.telemetry.addData("Yerror ",errorVector.getY());
+        myOpMode.telemetry.addData("Xerror ", PureErrorVector.getX());
+        myOpMode.telemetry.addData("Yerror ", PureErrorVector.getY());
         myOpMode.telemetry.addData("headingerror ",headingerror);
-        myOpMode.telemetry.addData("XTarget Vec ",TargetVector.getX());
-        myOpMode.telemetry.addData("YTarget Vec ",TargetVector.getY());
+        myOpMode.telemetry.addData("XTarget Vec ", TrueError.getX());
+        myOpMode.telemetry.addData("YTarget Vec ", TrueError.getY());
 
         myOpMode.telemetry.addData("FrontRight ", FrontRight.getVelocity());
         myOpMode.telemetry.addData("FrontLeft ", FrontLeft.getVelocity());
