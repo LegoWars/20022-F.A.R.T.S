@@ -463,9 +463,9 @@ public class Kitchenet {
         DcMotorEx MotorMap(String deviceName, DcMotorEx.Direction direction, DcMotor.RunMode EncoderMode) {
             DcMotorEx aMotor = myOpMode.hardwareMap.get(DcMotorEx.class, deviceName);
             aMotor.setDirection(direction);
-            aMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);  // Reset Encoders to zero
+            aMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
             aMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            aMotor.setMode(EncoderMode);  // Requires motor encoder cables to be hooked up.
+            aMotor.setMode(EncoderMode);
             return aMotor;
         }
 

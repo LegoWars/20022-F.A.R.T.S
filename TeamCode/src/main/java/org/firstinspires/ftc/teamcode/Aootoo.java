@@ -12,27 +12,26 @@ public class Aootoo extends LinearOpMode {
 
     private Kitchenet stuff = new Kitchenet(this);
 
-
     public static int i;
 
 
     @Override public void runOpMode() {
 
         ElapsedTime Timer;
-
         Timer = new ElapsedTime();
 
         stuff.initializeAuto();
-
         stuff.telemetryupdate();
 
 
-
         waitForStart();
+
         Timer.reset();
+
         i = 1;
 
         while (opModeIsActive()) {
+
             stuff.DriveUpdateAuto();
             stuff.PersonalUpdateTele();
             stuff.telemetryupdate();
@@ -54,7 +53,7 @@ public class Aootoo extends LinearOpMode {
                 }
             } else if (i == 3) {
                 if (Timer.seconds() < 2) {
-
+                    stuff.driveTo(10,0);
                 } else {
                     i += 1;
                     Timer.reset();
@@ -68,9 +67,7 @@ public class Aootoo extends LinearOpMode {
                     Timer.reset();
                         }
             }else if (i == 5) {
-                if (true) {
                     break;
-                }
             }
         }
     }
