@@ -13,11 +13,20 @@ public class Aootoo extends LinearOpMode {
     private Kitchenet stuff = new Kitchenet(this);
 
     public static int i;
+    ElapsedTime Timer;
+
+    public void Counter(double Time){
+        if (Timer.seconds() > Time) {
+            i += 1;
+            Timer.reset();
+        }
+    }
+
 
 
     @Override public void runOpMode() {
 
-        ElapsedTime Timer;
+
         Timer = new ElapsedTime();
 
         stuff.initializeAuto();
@@ -38,37 +47,29 @@ public class Aootoo extends LinearOpMode {
 
 
             if (i == 1) {
-                if (Timer.seconds() < 2) {
                     stuff.driveTo(0,0);
-                } else {
-                    i += 1;
-                    Timer.reset();
-                }
-            } else if (i == 2) {
-                if (Timer.seconds() < 5) {
-                    stuff.driveTo(20,0);
-                } else {
-                    i += 1;
-                    Timer.reset();
-                }
-            } else if (i == 3) {
-                if (Timer.seconds() < 2) {
-                    stuff.driveTo(10,0);
-                } else {
-                    i += 1;
-                    Timer.reset();
-                }
-            } else if (i == 4) {
-                if (Timer.seconds() < 5) {
-                    stuff.driveTo(0,0);
+            Counter(2);
+            }
 
-                } else {
-                    i += 1;
-                    Timer.reset();
-                        }
-            }else if (i == 5) {
+            else if (i == 2) {
+                    stuff.driveTo(20,0);
+            Counter(5);
+            }
+
+            else if (i == 3) {
+                    stuff.driveTo(10,0);
+            Counter(2);
+            }
+
+            else if (i == 4) {
+                    stuff.driveTo(0,0);
+            Counter(5);
+            }
+
+            else if (i == 5) {
                     break;
             }
+
         }
     }
 }
