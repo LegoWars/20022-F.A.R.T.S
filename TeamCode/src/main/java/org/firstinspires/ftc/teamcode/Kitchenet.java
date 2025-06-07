@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -88,6 +89,9 @@ public class Kitchenet {
     public Vector2d TrueError;
     public double Strict;
     public double Eager;
+
+    public ElapsedTime Timer;
+    public int i = 1;
 
     public Pose2D startpose;
 
@@ -221,6 +225,8 @@ public class Kitchenet {
         myOpMode.telemetry = new MultipleTelemetry(myOpMode.telemetry, FtcDashboard.getInstance().getTelemetry());
         FtcDashboard dashboard = FtcDashboard.getInstance();
 
+        Timer = new ElapsedTime();
+
 
         //Personal Init
 
@@ -253,6 +259,12 @@ public class Kitchenet {
 
     }
 
+
+    public void StartUpAuto(){
+
+        Timer.reset();
+
+    }
 
 
     public void initializeTele(){
@@ -592,6 +604,16 @@ public class Kitchenet {
         myOpMode.sleep(odoCalabrasionSleep);
 
     }
+
+
+
+    public void Counter(double Time){
+        if (Timer.seconds() > Time) {
+            i += 1;
+            Timer.reset();
+        }
+    }
+
 
 
         public void driveTo(double x, double y) {

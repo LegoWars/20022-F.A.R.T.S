@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 @Config
@@ -12,22 +11,11 @@ public class Aootoo extends LinearOpMode {
 
     private Kitchenet stuff = new Kitchenet(this);
 
-    public static int i;
-    ElapsedTime Timer;
-
-    public void Counter(double Time){
-        if (Timer.seconds() > Time) {
-            i += 1;
-            Timer.reset();
-        }
-    }
-
+    public int i;
 
 
     @Override public void runOpMode() {
 
-
-        Timer = new ElapsedTime();
 
         stuff.initializeAuto();
         stuff.telemetryupdate();
@@ -35,9 +23,8 @@ public class Aootoo extends LinearOpMode {
 
         waitForStart();
 
-        Timer.reset();
+        stuff.StartUpAuto();
 
-        i = 1;
 
         while (opModeIsActive()) {
 
@@ -48,22 +35,22 @@ public class Aootoo extends LinearOpMode {
 
             if (i == 1) {
                     stuff.driveTo(0,0);
-            Counter(2);
+            stuff.Counter(2);
             }
 
             else if (i == 2) {
                     stuff.driveTo(20,0);
-            Counter(5);
+            stuff.Counter(5);
             }
 
             else if (i == 3) {
                     stuff.driveTo(10,0);
-            Counter(2);
+            stuff.Counter(2);
             }
 
             else if (i == 4) {
                     stuff.driveTo(0,0);
-            Counter(5);
+            stuff.Counter(5);
             }
 
             else if (i == 5) {
