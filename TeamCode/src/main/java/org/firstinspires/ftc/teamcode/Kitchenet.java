@@ -24,9 +24,6 @@ public class Kitchenet {
 
 
     //Drive Config
-    private PIDController DriveController;
-    private PIDController StrafeController;
-
 
     public static double pDrive;
     public static double iDrive;
@@ -52,8 +49,6 @@ public class Kitchenet {
 
     public static double xTarget;
     public static double yTarget;
-    public static double PrexTarget;
-    public static double PreyTarget;
     public static double headingTarget;
 
 
@@ -83,15 +78,7 @@ public class Kitchenet {
 
     public Vector2d PureErrorVector = new Vector2d(0,0);
     public Vector2d PureTargetVector = new Vector2d(0,0);
-    public Vector2d TargetPath;
-    public Vector2d PastPath;
-    public double TargetPathSqurd;
-    public double ScalarProj;
-    public Vector2d PointOnPath;
-    public Vector2d ToPath;
-    public Vector2d TrueError;
-    public double Strict;
-    public double Eager;
+
 
     public ElapsedTime Timer;
     public int i = 1;
@@ -192,9 +179,6 @@ public class Kitchenet {
         odoYoffSet = -152.4;
         odoCalabrasionSleep = 500;
 
-        Eager = 1;
-        Strict = 1;
-
         DefaultSpeed = 1;
 
 
@@ -207,9 +191,6 @@ public class Kitchenet {
         ExpansionHub2_VoltageSensor = myOpMode.hardwareMap.get(VoltageSensor.class, "Expansion Hub 2");
 
         odo = myOpMode.hardwareMap.get(GoBildaPinpointDriver.class,"odo");
-
-        DriveController = new PIDController(pDrive,iDrive,dDrive);
-        StrafeController = new PIDController(pStrafe,iStrafe,dStrafe);
 
         odo.setOffsets(odoXoffSet, odoYoffSet);
         odo.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
@@ -224,8 +205,6 @@ public class Kitchenet {
         } else {
             xTarget = 0;
             yTarget = 0;
-            PrexTarget = 0;
-            PreyTarget = 0;
             headingTarget = 0;
         }
 
@@ -414,17 +393,10 @@ public class Kitchenet {
             headingCurrent = headingCurrent + 360;
         }
 
-        TargetPath = new Vector2d((xTarget - PrexTarget),(yTarget - PreyTarget));
-        PastPath = new Vector2d((xCurrent-PrexTarget),(yCurrent-PreyTarget));
-        TargetPathSqurd = (TargetPath.getX() * TargetPath.getX()) + (TargetPath.getY() * TargetPath.getY());
-        ScalarProj = PastPath.dot(TargetPath) / TargetPathSqurd;
-        PointOnPath = (new Vector2d(PrexTarget,PreyTarget)).plus(TargetPath.times(ScalarProj));
-        ToPath = PointOnPath.minus(new Vector2d(xCurrent,yCurrent));
 
         PureErrorVector = new Vector2d(xTarget-xCurrent,yTarget-yCurrent);
         PureTargetVector = PureErrorVector.rotateBy(-CurrentLocation.getHeading(AngleUnit.DEGREES));
 
-        TrueError = (ToPath.times(Strict)).plus(PureTargetVector.times(Eager));
 
         drivepid = DrivePID(pDrive, iDrive, dDrive, PureTargetVector.getX());
         strafepid = StrafePID(pStrafe, iStrafe, dStrafe, PureTargetVector.getY());
@@ -546,8 +518,7 @@ public class Kitchenet {
         myOpMode.telemetry.addData("Xerror ", PureErrorVector.getX());
         myOpMode.telemetry.addData("Yerror ", PureErrorVector.getY());
         myOpMode.telemetry.addData("headingerror ",headingerror);
-        myOpMode.telemetry.addData("XTarget Vec ", TrueError.getX());
-        myOpMode.telemetry.addData("YTarget Vec ", TrueError.getY());
+
 
         myOpMode.telemetry.addData("FrontRight ", FrontRight.getVelocity());
         myOpMode.telemetry.addData("FrontLeft ", FrontLeft.getVelocity());
@@ -607,8 +578,6 @@ public class Kitchenet {
 
             xTarget = startpose.getX(DistanceUnit.INCH);
             yTarget = startpose.getY(DistanceUnit.INCH);
-            PrexTarget = startpose.getX(DistanceUnit.INCH);
-            PreyTarget = startpose.getY(DistanceUnit.INCH);
             headingTarget = startpose.getHeading(AngleUnit.DEGREES);
 
         }
@@ -635,11 +604,6 @@ public class Kitchenet {
 
         public void driveTo(double x, double y) {
 
-            if (x!=xTarget || y!=yTarget){
-                PrexTarget=xTarget;
-                PreyTarget=yTarget;
-            }
-
             xTarget = x;
             yTarget = y;
             speed = DefaultSpeed;
@@ -647,11 +611,6 @@ public class Kitchenet {
         }
 
         public void driveTo(double x, double y, double heading) {
-
-            if (x!=xTarget || y!=yTarget){
-                PrexTarget=xTarget;
-                PreyTarget=yTarget;
-            }
 
             xTarget = x;
             yTarget = y;
@@ -661,11 +620,6 @@ public class Kitchenet {
         }
 
         public void driveTo(double x, double y, double heading, double Speed) {
-
-            if (x!=xTarget || y!=yTarget){
-                PrexTarget=xTarget;
-                PreyTarget=yTarget;
-            }
 
             xTarget = x;
             yTarget = y;
