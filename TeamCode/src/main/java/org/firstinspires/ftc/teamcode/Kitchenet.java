@@ -111,40 +111,6 @@ public class Kitchenet {
 
 
     //Personal Config
-    private PIDController CapstanController;
-    private PIDController SlidesController;
-    public static double pCapstan;
-    public static double iCapstan;
-    public static double dCapstan;
-    public static double fCapstan;
-
-    public static double pSlides;
-    public static double iSlides;
-    public static double dSlides;
-    public static double fSlides;
-    public double Capstanpid;
-    public double Slidespid;
-    public double Capstanff;
-    public double Capstanpower;
-    public double Slidespower;
-
-    public double CapstanTicksPerDegree;
-    public static double CapstanTarget;
-    public static double SlidesTarget;
-    public double CapstanCurrent;
-    public double SlidesCurrent;
-    public double Capstan1Power;
-    public double Capstan2Power;
-    public double Slides1Power;
-    public double Slides2Power;
-    public DcMotorEx Capstan1;
-    public DcMotorEx Capstan2;
-    public DcMotorEx Slides1;
-    public DcMotorEx Slides2;
-
-    private Servo Servo2;
-    private Servo Servo3;
-    private Servo Servo1;
 
 
 
@@ -216,32 +182,7 @@ public class Kitchenet {
 
         //Personal Init
 
-        pCapstan = 0.002;
-        iCapstan = 0;
-        dCapstan = 0.0001;
-        fCapstan = 0.0;
 
-        CapstanTicksPerDegree = 8192/360;
-
-        pSlides = 0.005;
-        iSlides = 0.0;
-        dSlides = 0.00001;
-        fSlides = 0.0;
-
-        CapstanTarget = 0;
-        SlidesTarget = 0;
-
-        Capstan1 = MotorMap( "Capstan1",DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Capstan2 = MotorMap( "Capstan2",DcMotor.Direction.REVERSE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Slides1 = MotorMap( "Slides1",DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Slides2 = MotorMap( "Slides2",DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        Servo3 = ServoSetup("Servo3", Servo.Direction.FORWARD);
-        Servo1 = ServoSetup("Servo1", Servo.Direction.FORWARD);
-        Servo2 = ServoSetup("Servo2", Servo.Direction.FORWARD);
-
-        CapstanController = new PIDController(pCapstan, iCapstan, dCapstan);
-        SlidesController = new PIDController(pSlides, iSlides, dSlides);
 
     }
 
@@ -290,28 +231,7 @@ public class Kitchenet {
 
     //Personal Init
 
-        CapstanTarget = 0;
-        SlidesTarget = 0;
 
-        pCapstan = 0.002;
-        iCapstan = 0;
-        dCapstan = 0.0001;
-        fCapstan = 0.0;
-
-        CapstanTicksPerDegree = 8192/360;
-
-        pSlides = 0.005;
-        iSlides = 0.0;
-        dSlides = 0.00001;
-        fSlides = 0.0;
-
-        Capstan1 = MotorMap( "Capstan1",DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Capstan2 = MotorMap( "Capstan2",DcMotor.Direction.REVERSE, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Slides1 = MotorMap( "Slides1",DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        Slides2 = MotorMap( "Slides2",DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        CapstanController = new PIDController(pCapstan, iCapstan, dCapstan);
-        SlidesController = new PIDController(pSlides, iSlides, dSlides);
 
     }
 
@@ -347,33 +267,7 @@ public class Kitchenet {
     public void PersonalUpdateTele(){
 
 
-        CapstanController.setPID(pCapstan, iCapstan, dCapstan);
-        SlidesController.setPID(pSlides, iSlides, dSlides);
 
-        CapstanCurrent = Capstan1.getCurrentPosition();
-        SlidesCurrent = Slides1.getCurrentPosition();
-
-        Capstanpid = CapstanController.calculate(CapstanCurrent, CapstanTarget);
-        Slidespid = SlidesController.calculate(SlidesCurrent, SlidesTarget);
-
-        Capstanff = Math.cos(Math.toRadians(CapstanTarget / CapstanTicksPerDegree)) * fCapstan;
-
-        Capstanpower = Capstanpid + Capstanff;
-        Slidespower = Slidespid;
-
-        if(Capstanpower < 0){
-            Capstanpower /= 10 ;
-        }
-
-        Capstan1Power = Capstanpower;
-        Capstan2Power = Capstanpower;
-        Slides1Power = Slidespower;
-        Slides2Power = Slidespower;
-
-        Capstan1.setPower(Capstan1Power);
-        Capstan2.setPower(Capstan2Power);
-        Slides1.setPower(Slides1Power);
-        Slides2.setPower(Slides2Power);
 
     }
 
@@ -421,32 +315,7 @@ public class Kitchenet {
 
     public void PersonalUpdateAuto() {
 
-        CapstanController.setPID(pCapstan, iCapstan, dCapstan);
-        SlidesController.setPID(pSlides, iSlides, dSlides);
 
-        CapstanCurrent = Capstan1.getCurrentPosition();
-        SlidesCurrent = Slides1.getCurrentPosition();
-
-        Capstanpid = CapstanController.calculate(CapstanCurrent, CapstanTarget);
-        Slidespid = SlidesController.calculate(SlidesCurrent, SlidesTarget);
-        Capstanff = Math.cos(Math.toRadians(CapstanTarget / CapstanTicksPerDegree)) * fCapstan;
-
-        Capstanpower = Capstanpid + Capstanff;
-        Slidespower = Slidespid;
-
-        if(Capstanpower < 0){
-            Capstanpower /= 10 ;
-        }
-
-        Capstan1Power = Capstanpower;
-        Capstan2Power = Capstanpower;
-        Slides1Power = Slidespower;
-        Slides2Power = Slidespower;
-
-        Capstan1.setPower(Capstan1Power);
-        Capstan2.setPower(Capstan2Power);
-        Slides1.setPower(Slides1Power);
-        Slides2.setPower(Slides2Power);
 
     }
 
@@ -557,7 +426,7 @@ public class Kitchenet {
         myOpMode.telemetry.addLine();
         myOpMode.telemetry.addLine("Other Data");
         myOpMode.telemetry.addData("Target Heading ",headingTarget);
-        myOpMode.telemetry.addData("Target Capstan ", CapstanTarget);
+
 
 
         dashboard.sendTelemetryPacket(packet1);
@@ -625,70 +494,6 @@ public class Kitchenet {
             yTarget = y;
             headingTarget = heading;
             speed = Speed;
-        }
-
-
-
-
-        public void CapstanPosition(double target) {
-            CapstanTarget = target;
-        }
-        public void CapstanDegree(double targetdegree) {
-
-            CapstanTarget = Math.min(Math.max(targetdegree, 0), 95) * CapstanTicksPerDegree;
-        }
-
-        public void CapstanLow() {
-            CapstanTarget = 0;
-        }
-
-        public void CapstanHighBasket() {
-            CapstanTarget = 94 * CapstanTicksPerDegree;
-        }
-
-        public void CapstanFloor() {
-        CapstanTarget = 20 * CapstanTicksPerDegree;
-    }
-
-        public void CapstanWall(){
-            CapstanTarget = 27 * CapstanTicksPerDegree;
-        }
-
-
-    public void SlidesPosition(double target) {
-
-            SlidesTarget = target;
-        }
-
-        public void SlidesRetracted (){
-            SlidesTarget = 0;
-        }
-
-        public void SlidesHighExtend (){
-            SlidesTarget = 1450;
-        }
-
-
-        public void ResetCapstan (){
-            Capstan1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            Capstan2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        }
-
-        public void ResetSlides (){
-            Slides1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            Slides2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        }
-
-        public void Servo1Position (double Position){
-            Servo1.setPosition(Position);
-        }
-
-        public void Servo2Position (double Position){
-            Servo2.setPosition(Position);
-        }
-
-        public void Servo3Position (double Position){
-            Servo3.setPosition(Position);
         }
 
 

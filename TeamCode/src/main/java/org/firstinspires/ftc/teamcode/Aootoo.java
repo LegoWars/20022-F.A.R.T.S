@@ -24,12 +24,12 @@ public class Aootoo extends LinearOpMode {
         waitForStart();
 
         stuff.StartUpAuto();
+        stuff.telemetryupdate();
 
 
         while (opModeIsActive()) {
 
             stuff.DriveUpdateAuto();
-            stuff.PersonalUpdateTele();
             stuff.telemetryupdate();
 
 

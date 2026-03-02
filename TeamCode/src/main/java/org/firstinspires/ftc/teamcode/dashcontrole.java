@@ -9,14 +9,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 @Autonomous(name="dash controle")
 public class dashcontrole extends LinearOpMode {
 
-    private Kitchen stuff = new Kitchen(this);
+    private Kitchenet stuff = new Kitchenet(this);
 
 
     public static double testx;
     public static double testy;
     public static double testheading;
-    public static double testjohnbobdegree;
-    public static double testemmaemmrposition;
 
 
 
@@ -25,7 +23,7 @@ public class dashcontrole extends LinearOpMode {
 
 
 
-        stuff.startlocation(0,0,180);
+        stuff.startlocation(0,0,0);
         stuff.initializeAuto();
 
         stuff.telemetryupdate();
@@ -34,17 +32,16 @@ public class dashcontrole extends LinearOpMode {
 
         waitForStart();
 
-        stuff.controllerUpdateAuto();
+        stuff.StartUpAuto();
         stuff.telemetryupdate();
 
         while (opModeIsActive()) {
 
-            stuff.controllerUpdateAuto();
+            stuff.DriveUpdateAuto();
             stuff.telemetryupdate();
 
             stuff.driveTo(testx, testy, testheading);
-            stuff.JohnBobDegree(testjohnbobdegree);
-            stuff.EmmaEmmrPosition(testemmaemmrposition);
+
 
 
 
