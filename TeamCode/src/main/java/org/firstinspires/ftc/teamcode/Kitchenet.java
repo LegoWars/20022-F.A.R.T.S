@@ -64,6 +64,9 @@ public class Kitchenet {
     double IntThingdrive;
     double driveerror;
 
+    double laserrorstrafe;
+    double IntThingstrafe;
+    double strafeerror;
 
     public double xCurrent;
     public double yCurrent;
@@ -167,6 +170,10 @@ public class Kitchenet {
         laserrordrive = 0;
         IntThingdrive = 0;
         driveerror = 0;
+
+        laserrorstrafe = 0;
+        IntThingstrafe = 0;
+        strafeerror = 0;
 
         pDrive = 90;
         iDrive = 0;
@@ -419,9 +426,9 @@ public class Kitchenet {
 
         TrueError = (ToPath.times(Strict)).plus(PureTargetVector.times(Eager));
 
-        drivepid = DrivePID(pDrive, iDrive, dDrive, TrueError.getX());
-        strafepid = DrivePID(pStrafe, iStrafe, dStrafe, TrueError.getY());
-        headingpid =HeadingPID(pHeading,iHeading,dHeading, headingCurrent, headingTarget);
+        drivepid = DrivePID(pDrive, iDrive, dDrive, PureTargetVector.getX());
+        strafepid = StrafePID(pStrafe, iStrafe, dStrafe, PureTargetVector.getY());
+        headingpid = HeadingPID(pHeading,iHeading,dHeading, headingCurrent, headingTarget);
 
         drivevelocity = drivepid;
         strafevelocity = strafepid;
@@ -518,6 +525,16 @@ public class Kitchenet {
         return output;
     }
 
+    public double StrafePID(double p, double i, double d, double error){
+
+        strafeerror = error;
+        IntThingstrafe += strafeerror;
+        double derThing = strafeerror - laserrorstrafe;
+        double output = (strafeerror * p) + (IntThingstrafe * i) + (derThing * d);
+        laserrorstrafe = strafeerror;
+
+        return output;
+    }
 
 
     public void telemetryupdate(){
