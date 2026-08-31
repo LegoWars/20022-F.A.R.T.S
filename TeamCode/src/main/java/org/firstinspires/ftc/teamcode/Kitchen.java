@@ -268,6 +268,10 @@ public class Kitchen {
         odo.update();
         Pose2D CurrentLocation = odo.getPosition();
 
+        xCurrent = CurrentLocation.getX(DistanceUnit.INCH);
+        yCurrent = CurrentLocation.getY(DistanceUnit.INCH);
+        headingCurrent = -CurrentLocation.getHeading(AngleUnit.DEGREES);
+
 //        DriveController.setPID(pDrive, iDrive, dDrive);
 //        StrafeController.setPID(pStrafe, iStrafe, dStrafe);
         //HeadingController.setPID(pHeading, iHeading, dHeading);
