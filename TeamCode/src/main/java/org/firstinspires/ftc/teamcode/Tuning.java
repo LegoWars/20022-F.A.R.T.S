@@ -10,13 +10,12 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name="Tuning")
 public class Tuning extends LinearOpMode {
 
-    private Kitchen stuff = new Kitchen(this);
+    private Kitchenet stuff = new Kitchenet(this);
 
 
     public static double tunex;
     public static double tuney;
     public static double tuneheading;
-    public static double bannanadegree;
 
 
 
@@ -25,15 +24,17 @@ public class Tuning extends LinearOpMode {
         ElapsedTime Timer;
 
         Timer = new ElapsedTime();
+
+
         stuff.initializeAuto();
 
         stuff.telemetryupdate();
 
 
-
-
-
         waitForStart();
+
+        stuff.StartUpAuto();
+
         Timer.reset();
         tunex = 0;
         tuney = 0;
@@ -41,22 +42,23 @@ public class Tuning extends LinearOpMode {
 
 
         while (opModeIsActive()) {
-            stuff.controllerUpdateAuto();
+
+            stuff.DriveUpdateAuto();
             stuff.telemetryupdate();
 
 
 
-//                if (Timer.seconds() < 4) {
-//
-//                    stuff.driveTo(0, 0,0);
-//
-//                } else if (Timer.seconds() < 8) {
-//
-//                    stuff.driveTo(0, 0, 0);
-//
-//                } else {
-//                    Timer.reset();
-//                }
+                if (Timer.seconds() < 5) {
+
+                    stuff.driveTo(0, 0,0);
+
+                } else if (Timer.seconds() < 10) {
+
+                    stuff.driveTo(tunex, tuney, tuneheading);
+
+                } else {
+                    Timer.reset();
+                }
 
 
 

@@ -38,7 +38,6 @@ public class Telepop extends LinearOpMode {
             stuff.telemetryupdate();
 
             stuff.DriveUpdateTele( -(gamepad1.left_stick_y), gamepad1.left_stick_x,gamepad1.right_stick_x, Speed);
-            stuff.PersonalUpdateTele();
 
             if (0.1 <= gamepad1.left_trigger) {
                 Speed = 0.25;
@@ -48,11 +47,7 @@ public class Telepop extends LinearOpMode {
                 Speed = 0.5;
             }
 
-            stuff.SlidesPosition(1);
 
-            stuff.SlidesRetracted();
-
-            stuff.CapstanPosition(1);
 
             if (gamepad1.a && gamepad1.y) {
                 stuff.ResetPinpoint();
