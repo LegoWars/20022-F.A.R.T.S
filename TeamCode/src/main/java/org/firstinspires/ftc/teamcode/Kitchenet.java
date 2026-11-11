@@ -41,6 +41,8 @@ public class Kitchenet {
     public double drivevelocity;
     public double strafevelocity;
     public double headingvelocity;
+    public double eager;
+    public double strickness;
 
     public static double speed;
     public double DefaultSpeed;
@@ -49,6 +51,8 @@ public class Kitchenet {
     public static double xTarget;
     public static double yTarget;
     public static double headingTarget;
+    public static double LastxTarget;
+    public static double LastyTarget;
 
 
     double laserrorheading;
@@ -77,6 +81,8 @@ public class Kitchenet {
 
     public Vector2d PureErrorVector = new Vector2d(0,0);
     public Vector2d PureTargetVector = new Vector2d(0,0);
+    public Vector2d PathErrorVector = new Vector2d(0,0);
+    public Vector2d FinalVector = new Vector2d(0,0);
 
 
     public ElapsedTime Timer;
@@ -138,6 +144,9 @@ public class Kitchenet {
         pHeading = 40;
         iHeading = 0;
         dHeading = 0;
+
+        eager = 1;
+        strickness = 1;
 
         odoYawScalor = 1.0012049;
         odoXoffSet = -57.15;
@@ -291,8 +300,23 @@ public class Kitchenet {
         PureTargetVector = PureErrorVector.rotateBy(-CurrentLocation.getHeading(AngleUnit.DEGREES));
 
 
-        drivepid = DrivePID(pDrive, iDrive, dDrive, PureTargetVector.getX());
-        strafepid = StrafePID(pStrafe, iStrafe, dStrafe, PureTargetVector.getY());
+        xTarget =0;
+        yTarget =0;
+        xCurrent =0;
+        yCurrent =0;
+        LastxTarget = 0;
+        LastyTarget = 0;
+
+        double m = ((yTarget-LastyTarget)/(xTarget-LastxTarget));
+        double b = yTarget - (m*xTarget);
+
+
+        PathErrorVector = PathFallow(xTarget,yTarget,xCurrent,yCurrent);
+
+        FinalVector = ((PureTargetVector.times(eager)).plus(PathErrorVector.times(strickness)));
+
+        drivepid = DrivePID(pDrive, iDrive, dDrive, FinalVector.getX());
+        strafepid = StrafePID(pStrafe, iStrafe, dStrafe, FinalVector.getY());
         headingpid = HeadingPID(pHeading,iHeading,dHeading, headingCurrent, headingTarget);
 
         drivevelocity = drivepid;
@@ -372,6 +396,32 @@ public class Kitchenet {
         double derThing = strafeerror - laserrorstrafe;
         double output = (strafeerror * p) + (IntThingstrafe * i) + (derThing * d);
         laserrorstrafe = strafeerror;
+
+        return output;
+    }
+
+    public Vector2d PathFallow(double TargetX, double TargetY, double CurrentX, double CurrentY){
+
+       Vector2d output = new Vector2d(0,0);
+
+       double LastTargetX = 0;
+       double LastTargetY = 0;
+       double InterX = 0;
+       double InterY = 0;
+
+        if((!(TargetX==LastTargetX) && !(TargetY==LastTargetY))) {
+            double m = ((TargetY - LastTargetY) / (TargetX - LastTargetX));
+            double b = TargetY - (m * TargetX);
+            InterX = ((m*b) - (m*CurrentY) - CurrentX) / (-1 - (m*m));
+            InterY = (m*InterX) + b;
+            output = new Vector2d(InterX - CurrentX, InterY - CurrentY);
+
+        } else if ((!(TargetX==LastTargetX) && (TargetY==LastTargetY))) {
+
+        } else if (((TargetX==LastTargetX) && !(TargetY==LastTargetY))) {
+
+        }
+
 
         return output;
     }
