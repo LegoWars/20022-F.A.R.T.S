@@ -305,7 +305,7 @@ public class Kitchenet {
         PureErrorVector = new Vector2d(xTarget-xCurrent,yTarget-yCurrent);
         PureTargetVector = PureErrorVector.rotateBy(-CurrentLocation.getHeading(AngleUnit.DEGREES));
 
-        PathErrorVector = PathFallow(xTarget,yTarget,xCurrent,yCurrent);
+        PathErrorVector = LinerPathFallow(xTarget,yTarget,xCurrent,yCurrent);
 
         FinalVector = ((PureTargetVector.times(eager)).plus(PathErrorVector.times(strickness)));
 
@@ -394,7 +394,7 @@ public class Kitchenet {
         return output;
     }
 
-    public Vector2d PathFallow(double TargetX, double TargetY, double CurrentX, double CurrentY){
+    public Vector2d LinerPathFallow(double TargetX, double TargetY, double CurrentX, double CurrentY){
 
         double InterX;
         double InterY;
