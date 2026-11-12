@@ -51,8 +51,10 @@ public class Kitchenet {
     public static double xTarget;
     public static double yTarget;
     public static double headingTarget;
-    public static double LastxTarget;
-    public static double LastyTarget;
+    public static double LastTargetX;
+    public static double LastTargetY;
+    public static double CurrentTargetX;
+    public static double CurrentTargetY;
 
 
     double laserrorheading;
@@ -180,6 +182,10 @@ public class Kitchenet {
             xTarget = 0;
             yTarget = 0;
             headingTarget = 0;
+            LastTargetX = 0;
+            LastTargetY = 0;
+            CurrentTargetX = 0;
+            CurrentTargetY = 0;
         }
 
         myOpMode.telemetry = new MultipleTelemetry(myOpMode.telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -299,18 +305,6 @@ public class Kitchenet {
         PureErrorVector = new Vector2d(xTarget-xCurrent,yTarget-yCurrent);
         PureTargetVector = PureErrorVector.rotateBy(-CurrentLocation.getHeading(AngleUnit.DEGREES));
 
-
-        xTarget =0;
-        yTarget =0;
-        xCurrent =0;
-        yCurrent =0;
-        LastxTarget = 0;
-        LastyTarget = 0;
-
-        double m = ((yTarget-LastyTarget)/(xTarget-LastxTarget));
-        double b = yTarget - (m*xTarget);
-
-
         PathErrorVector = PathFallow(xTarget,yTarget,xCurrent,yCurrent);
 
         FinalVector = ((PureTargetVector.times(eager)).plus(PathErrorVector.times(strickness)));
@@ -402,26 +396,44 @@ public class Kitchenet {
 
     public Vector2d PathFallow(double TargetX, double TargetY, double CurrentX, double CurrentY){
 
+        double InterX;
+        double InterY;
+
        Vector2d output = new Vector2d(0,0);
 
        double LastTargetX = 0;
        double LastTargetY = 0;
-       double InterX = 0;
-       double InterY = 0;
 
-        if((!(TargetX==LastTargetX) && !(TargetY==LastTargetY))) {
-            double m = ((TargetY - LastTargetY) / (TargetX - LastTargetX));
-            double b = TargetY - (m * TargetX);
-            InterX = ((m*b) - (m*CurrentY) - CurrentX) / (-1 - (m*m));
-            InterY = (m*InterX) + b;
-            output = new Vector2d(InterX - CurrentX, InterY - CurrentY);
+        if (CurrentTargetX!=xTarget || CurrentTargetY!=yTarget) {
+            LastTargetX = CurrentTargetX;
+            LastTargetY = CurrentTargetY;
 
-        } else if ((!(TargetX==LastTargetX) && (TargetY==LastTargetY))) {
-
-        } else if (((TargetX==LastTargetX) && !(TargetY==LastTargetY))) {
-
+            CurrentTargetX = xTarget;
+            CurrentTargetY = yTarget;
         }
 
+
+        if((TargetX!=LastTargetX)) {
+
+            double m = ((TargetY - LastTargetY) / (TargetX - LastTargetX));
+            double b = TargetY - (m * TargetX);
+
+            InterX = ((m*b) - (m*CurrentY) - CurrentX) / (-1 - (m*m));
+            InterY = (m*InterX) + b;
+
+            output = new Vector2d(InterX - CurrentX, InterY - CurrentY);
+
+        } else if ((TargetX==LastTargetX)) {
+
+            //double m = 00;
+            //double b = TargetY;
+
+            InterX = TargetX;
+            InterY = CurrentY;
+
+            output = new Vector2d(InterX - CurrentX, InterY - CurrentY);
+
+        }
 
         return output;
     }
@@ -497,6 +509,10 @@ public class Kitchenet {
             xTarget = startpose.getX(DistanceUnit.INCH);
             yTarget = startpose.getY(DistanceUnit.INCH);
             headingTarget = startpose.getHeading(AngleUnit.DEGREES);
+            LastTargetX = xTarget;
+            LastTargetY = yTarget;
+            CurrentTargetX = xTarget;
+            CurrentTargetY = yTarget;
 
         }
 
